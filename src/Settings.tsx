@@ -40,7 +40,9 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function Settings(props: SettingsProps) {
     const classes = useStyles();
+
     const [expanded, setExpanded] = React.useState<string | false>(false);
+
     const { setDarkMode, defaultDarkMode } = props;
     const darkState = defaultDarkMode;
 

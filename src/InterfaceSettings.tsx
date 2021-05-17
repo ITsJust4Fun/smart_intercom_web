@@ -56,26 +56,37 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function InterfaceSettings() {
     const classes = useStyles();
-    let changedProps = Array();
-    const [value, setValue] = React.useState(rows);
+    let changedProps: Data[] = [];
+    const [values, setValues] = React.useState(rows);
 
     const handleChangeProp = (row: Data, value: any) => {
-        const index = changedProps.map(function(e) { return e.name; }).indexOf(row.name);
+        const indexChangedRow = changedProps.map(function(e) { return e.name; }).indexOf(row.name);
+        const indexValuesRow = values.map(function(e) { return e.name; }).indexOf(row.name);
         const defaultValueArray = rows.filter(defaultRow => defaultRow.name === row.name);
         let defaultValue = null;
+
+        console.log(indexValuesRow);
 
         if (defaultValueArray.length) {
             defaultValue = defaultValueArray[0].value;
         }
 
-        if (index === -1) {
+        if (indexChangedRow === -1) {
             const changedRow = createData(row.name, row.type, value);
             changedProps.push(changedRow);
-        } else if (index > -1 && defaultValue === row.value) {
-
-            changedProps.splice(index, 1);
+        } else if (indexChangedRow > -1 && defaultValue !== row.value) {
+            changedProps[indexChangedRow].value = row.value;
+        } else {
+            changedProps.splice(indexChangedRow, 1);
         }
-        setValue(value);
+
+        let newValues = [...values];
+
+        if (indexValuesRow !== -1) {
+            newValues[indexValuesRow].value = value;
+        }
+
+        setValues(newValues);
     };
 
     return (
@@ -87,8 +98,7 @@ export default function InterfaceSettings() {
                     aria-label="enhanced table"
                 >
                     <TableBody>
-                        {rows.map((row, index) => {
-                            const labelId = `enhanced-table-checkbox-${index}`;
+                        {values.map((row, index) => {
                             let valueEditor = null;
 
                             switch (row.type) {
