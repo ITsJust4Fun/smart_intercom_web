@@ -1,5 +1,4 @@
 import React from 'react';
-import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 
 interface TabPanelProps {
@@ -18,7 +17,7 @@ export default function BottomNavigationContainer(props: TabPanelProps) {
         >
             {value === index && (
                 <Box style={{paddingBottom: 50}}>
-                    <Typography>{children}</Typography>
+                    {children}
                 </Box>
             )}
         </div>
