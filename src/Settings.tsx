@@ -10,12 +10,8 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 
-import InterfaceSettings from './InterfaceSettings'
-
-interface SettingsProps {
-    setDarkMode: React.Dispatch<React.SetStateAction<boolean>>;
-    defaultDarkMode: boolean;
-}
+import SettingsTable from "./SettingsTable";
+import { createData, Data, Editors } from './Data'
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -38,45 +34,46 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
+interface SettingsProps {
+    darkMode: boolean;
+    setDarkMode: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
 export default function Settings(props: SettingsProps) {
     const classes = useStyles();
 
     const [expanded, setExpanded] = React.useState<string | false>(false);
 
-    const { setDarkMode, defaultDarkMode } = props;
-    const darkState = defaultDarkMode;
+    const { darkMode, setDarkMode } = props;
 
-    const handleChange = (panel: string) => (event: React.ChangeEvent<{}>, isExpanded: boolean) => {
+    const interfaceSettings = [
+        createData("Dark Mode", Editors.Switch, darkMode),
+        createData("Test text input", Editors.TextField, "test"),
+        createData("Test number input", Editors.NumberField, 5, 0, 100),
+    ];
+
+    const defaultInterfaceSettings: Data[] = [];
+    interfaceSettings.forEach(val => defaultInterfaceSettings.push(Object.assign({}, val)));
+
+    const handleExpandChange = (panel: string) => (event: React.ChangeEvent<{}>, isExpanded: boolean) => {
         setExpanded(isExpanded ? panel : false);
     };
 
-    const handleDarkModeChange = () => {
-        setDarkMode(!darkState);
+    const handleInterfaceChange = (values: Data[]) => {
+        for (let data of values) {
+            if (data.name === "Dark Mode") {
+                setDarkMode(data.value);
+            }
+        }
     };
 
     return (
         <div className={classes.root}>
-            <Accordion expanded={expanded === 'InterfacePanel'} onChange={handleChange('InterfacePanel')}>
-                <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="InterfacePanel-bh-content"
-                    id="InterfacePanel-bh-header"
-                >
-                    <Typography className={classes.heading}>Interface settings</Typography>
-                    <Typography className={classes.secondaryHeading}>Setup web app</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                    <InterfaceSettings />
-                </AccordionDetails>
-                <Divider />
-                <AccordionActions>
-                    <Button size="small">Cancel</Button>
-                    <Button size="small" color="primary">
-                        Save
-                    </Button>
-                </AccordionActions>
-            </Accordion>
-            <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
+            <SettingsTable rows={interfaceSettings}
+                           defaultRows={defaultInterfaceSettings}
+                           handleTableChanged={handleInterfaceChange}
+            />
+            <Accordion expanded={expanded === 'panel2'} onChange={handleExpandChange('panel2')}>
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="panel2bh-content"
@@ -101,7 +98,7 @@ export default function Settings(props: SettingsProps) {
                     </Button>
                 </AccordionActions>
             </Accordion>
-            <Accordion expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
+            <Accordion expanded={expanded === 'panel3'} onChange={handleExpandChange('panel3')}>
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="panel3bh-content"
@@ -126,7 +123,7 @@ export default function Settings(props: SettingsProps) {
                     </Button>
                 </AccordionActions>
             </Accordion>
-            <Accordion expanded={expanded === 'panel4'} onChange={handleChange('panel4')}>
+            <Accordion expanded={expanded === 'panel4'} onChange={handleExpandChange('panel4')}>
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="panel4bh-content"
