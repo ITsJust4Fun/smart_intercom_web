@@ -20,6 +20,7 @@ import BottomNavigationContainer from "./BottomNavigationContainer";
 import Dashboard from "./Dashboard";
 import Videos from "./Videos";
 import Settings from "./Settings";
+import Reports from "./Reports";
 
 const useStyles = makeStyles({
     root: {
@@ -102,7 +103,7 @@ export default function MainWindow() {
                     <Settings darkMode={darkState} setDarkMode={setDarkState} />
                 </BottomNavigationContainer>
                 <BottomNavigationContainer value={value} index={Tabs.AssignmentTab}>
-                    Assignment
+                    <Reports />
                 </BottomNavigationContainer>
                 <BottomNavigation
                     value={value}
