@@ -21,6 +21,8 @@ import Dashboard from "./Dashboard";
 import Videos from "./Videos";
 import Settings from "./Settings";
 import Reports from "./Reports";
+import './i18n/config';
+import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles({
     root: {
@@ -49,9 +51,15 @@ export default function MainWindow() {
     };
 
     const [darkState, setDarkState] = React.useState(false);
+    const { t, i18n } = useTranslation(["main"]);
+
     const palletType = darkState ? "dark" : "light";
     const mainPrimaryColor = darkState ? deepPurple[200] : lightBlue[700];
     const mainSecondaryColor = darkState ? green[200] : green[400];
+
+    const setLanguage = (language: string) => {
+        i18n.changeLanguage(language);
+    }
 
     const theme = React.useMemo(
         () =>
@@ -100,7 +108,11 @@ export default function MainWindow() {
                     <Videos />
                 </BottomNavigationContainer>
                 <BottomNavigationContainer value={value} index={Tabs.SettingsTab}>
-                    <Settings darkMode={darkState} setDarkMode={setDarkState} />
+                    <Settings darkMode={darkState}
+                              setDarkMode={setDarkState}
+                              language={i18n.language}
+                              setLanguage={setLanguage}
+                    />
                 </BottomNavigationContainer>
                 <BottomNavigationContainer value={value} index={Tabs.AssignmentTab}>
                     <Reports />
@@ -111,10 +123,10 @@ export default function MainWindow() {
                     showLabels
                     className={classes.bottomNavigation}
                 >
-                    <BottomNavigationAction label="Dashboard" icon={dashboardIconTab}/>
-                    <BottomNavigationAction label="Videos" icon={videosIconTab}/>
-                    <BottomNavigationAction label="Settings" icon={settingsIconTab}/>
-                    <BottomNavigationAction label="Reports" icon={assignmentIconTab}/>
+                    <BottomNavigationAction label={t("main:dashboard")} icon={dashboardIconTab}/>
+                    <BottomNavigationAction label={t("main:videos")} icon={videosIconTab}/>
+                    <BottomNavigationAction label={t("main:settings")} icon={settingsIconTab}/>
+                    <BottomNavigationAction label={t("main:reports")} icon={assignmentIconTab}/>
                 </BottomNavigation>
             </div>
         </ThemeProvider>

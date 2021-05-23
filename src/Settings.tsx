@@ -1,6 +1,8 @@
 import React from 'react';
+import { TFunction, withTranslation } from 'react-i18next';
+import { i18n } from 'i18next';
 
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
@@ -11,7 +13,8 @@ import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 
 import SettingsTable from "./SettingsTable";
-import { createData, Data, Editors } from './Data'
+import {createData, createNumberFieldData, createOptionsFieldData, Data, Editors} from './Data'
+import { languages } from "./i18n/config";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -35,22 +38,32 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface SettingsProps {
+    t: TFunction<string[]>;
+    i18n: i18n;
     darkMode: boolean;
     setDarkMode: React.Dispatch<React.SetStateAction<boolean>>;
+    language: string;
+    setLanguage: (language: string) => void;
 }
 
-export default function Settings(props: SettingsProps) {
+function Settings(props: SettingsProps) {
     const classes = useStyles();
-
     const [expanded, setExpanded] = React.useState<string | false>(false);
-
-    const { darkMode, setDarkMode } = props;
+    const { t, darkMode, setDarkMode, language, setLanguage } = props;
 
     const interfaceSettings = [
-        createData("Dark Mode", Editors.Switch, darkMode),
-        createData("Test text input", Editors.TextField, "test"),
-        createData("Test number input", Editors.NumberField, 5, 0, 100),
+        createData("darkMode", Editors.Switch, darkMode),
+        createOptionsFieldData("language", language, languages),
+        createData("testTextInput", Editors.TextField, "test"),
+        createNumberFieldData("testNumberInput", 5, 0, 100),
     ];
+
+    const titles: Record<string, string> = {
+        "darkMode": t("settings:darkMode"),
+        "language": t("settings:language"),
+        "testTextInput": "Test text input",
+        "testNumberInput": "Test number input",
+    };
 
     const defaultInterfaceSettings: Data[] = [];
     interfaceSettings.forEach(val => defaultInterfaceSettings.push(Object.assign({}, val)));
@@ -61,16 +74,21 @@ export default function Settings(props: SettingsProps) {
 
     const handleInterfaceChange = (values: Data[]) => {
         for (let data of values) {
-            if (data.name === "Dark Mode") {
+            if (data.name === "darkMode") {
                 setDarkMode(data.value);
+            } else if (data.name === "language") {
+                setLanguage(data.value);
             }
         }
     };
 
     return (
         <div className={classes.root}>
-            <SettingsTable rows={interfaceSettings}
+            <SettingsTable title="interfaceSettings"
+                           description="setupWebApp"
+                           rows={interfaceSettings}
                            defaultRows={defaultInterfaceSettings}
+                           rowsTitles={titles}
                            handleTableChanged={handleInterfaceChange}
             />
             <Accordion expanded={expanded === 'panel2'} onChange={handleExpandChange('panel2')}>
@@ -148,3 +166,5 @@ export default function Settings(props: SettingsProps) {
         </div>
     );
 }
+
+export default withTranslation("settings")(Settings);

@@ -1,4 +1,6 @@
 import React from 'react';
+import { TFunction, withTranslation } from 'react-i18next';
+import { i18n } from 'i18next';
 
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -8,6 +10,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableRow from '@material-ui/core/TableRow';
 import Switch from '@material-ui/core/Switch';
 import TextField from '@material-ui/core/TextField';
+import Select from '@material-ui/core/Select';
 import AccordionSummary from "@material-ui/core/AccordionSummary";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Typography from "@material-ui/core/Typography";
@@ -43,15 +46,20 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface SettingsTableProps {
+    t: TFunction<string[]>;
+    i18n: i18n;
+    title: string;
+    description: string;
     rows: Data[];
     defaultRows: Data[];
+    rowsTitles: Record<string, string>;
     handleTableChanged: (values: Data[]) => void;
 }
 
 let changedProps: Data[] = [];
 
-export default function SettingsTable(props: SettingsTableProps) {
-    const { rows, defaultRows, handleTableChanged } = props;
+function SettingsTable(props: SettingsTableProps) {
+    const { t, title, description, rows, defaultRows, rowsTitles, handleTableChanged } = props;
 
     const classes = useStyles();
     const [values, setValues] = React.useState(rows);
@@ -98,8 +106,8 @@ export default function SettingsTable(props: SettingsTableProps) {
             <TableContainer>
                 <Table
                     className={classes.table}
-                    aria-labelledby="tableTitle"
-                    aria-label="enhanced table"
+                    aria-labelledby={title}
+                    aria-label={title}
                 >
                     <TableBody>
                         {values.map((row) => {
@@ -139,6 +147,29 @@ export default function SettingsTable(props: SettingsTableProps) {
                                                 handleChangeProp(row, event.target.value)}
                                         />
                                     break;
+                                case Editors.OptionsField:
+                                    if (row.options) {
+                                        const options: Record<string, string> = row.options;
+                                        valueEditor =
+                                            <Select
+                                                native
+                                                value={row.value}
+                                                onChange={(event) =>
+                                                    handleChangeProp(row, event.target.value)}
+                                            >
+                                                {
+                                                    Object.keys(options).map((optionKey) => {
+                                                        return (
+                                                            <option key={optionKey}
+                                                                    value={optionKey}
+                                                            >
+                                                                {options[optionKey]}
+                                                            </option>);
+                                                    })
+                                                }
+                                            </Select>
+                                    }
+                                    break;
                             }
 
                             return (
@@ -147,7 +178,7 @@ export default function SettingsTable(props: SettingsTableProps) {
                                     tabIndex={-1}
                                     key={row.name}
                                 >
-                                    <TableCell>{row.name}</TableCell>
+                                    <TableCell>{rowsTitles[row.name]}</TableCell>
                                     <TableCell align="right">{valueEditor}</TableCell>
                                 </TableRow>
                             );
@@ -158,24 +189,26 @@ export default function SettingsTable(props: SettingsTableProps) {
         </div>;
 
     return(
-        <Accordion expanded={expanded === 'InterfacePanel'} onChange={handleExpandChange('InterfacePanel')}>
+        <Accordion expanded={expanded === title} onChange={handleExpandChange(title)}>
             <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
-                aria-controls="InterfacePanel-bh-content"
-                id="InterfacePanel-bh-header"
+                aria-controls={`${title}-bh-content`}
+                id={`${title}-bh-header`}
             >
-                <Typography className={classes.heading}>Interface settings</Typography>
-                <Typography className={classes.secondaryHeading}>Setup web app</Typography>
+                <Typography className={classes.heading}>{t(`settings:${title}`)}</Typography>
+                <Typography className={classes.secondaryHeading}>{t(`settings:${description}`)}</Typography>
             </AccordionSummary>
             <AccordionDetails>
                 {SettingsTable}
             </AccordionDetails>
             <AccordionActions>
-                <Button size="small">Cancel</Button>
+                <Button size="small">{t("settings:cancel")}</Button>
                 <Button size="small" color="primary" onClick={handleSave}>
-                    Save
+                    {t("settings:save")}
                 </Button>
             </AccordionActions>
         </Accordion>
     );
 }
+
+export default withTranslation("settings")(SettingsTable);
