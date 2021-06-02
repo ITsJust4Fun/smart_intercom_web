@@ -1,6 +1,6 @@
-import React from 'react';
-import MainWindow from "./MainWindow";
-import './App.css';
+import React from 'react'
+import MainWindow from './MainWindow'
+import './App.css'
 
 function App() {
     return (
@@ -8,4 +8,4 @@ function App() {
     )
 }
 
-export default App;
+export default App

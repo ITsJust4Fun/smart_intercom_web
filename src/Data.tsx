@@ -6,12 +6,12 @@ export enum Editors {
 }
 
 export interface Data {
-    name: string;
-    type: Editors;
-    value: any;
-    minValue?: number;
-    maxValue?: number;
-    options?: Record<string, string>;
+    name: string
+    type: Editors
+    value: any
+    minValue?: number
+    maxValue?: number
+    options?: Record<string, string>
 }
 
 export function createData(
