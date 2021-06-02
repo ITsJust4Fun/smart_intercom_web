@@ -1,6 +1,7 @@
 {
   "darkMode": "Тёмная тема",
   "language": "Язык",
+  "logout": "Выход",
   "interfaceSettings": "Настройки интерфейса",
   "setupWebApp": "Настройки вида приложения",
   "cancel": "Отменить",

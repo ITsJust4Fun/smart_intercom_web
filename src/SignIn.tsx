@@ -74,43 +74,39 @@ interface SignInSideProps {
     setAuthState: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-let timer: number
-
 export default function SignIn(props: SignInSideProps) {
     const { setAuthState } = props;
     const classes = useStyles();
 
-    let password = ""
-    let isRemember = false
+    const [password, setPassword] = React.useState("")
+    const [isRemember, setIsRemember] = React.useState(false)
 
     const handlePasswordEdit = (value: string) => {
-        password = value
+        setPassword(value)
     }
 
     const handleRememberEdit = (value: boolean) => {
-        isRemember = value
+        setIsRemember(value)
     }
 
     const [onRefreshTokenHandler] = useLazyQuery(REFRESH_TOKEN, {
         onCompleted: (data) => {
-            console.log(data)
-
             if (!data || !data['refreshToken']) {
                 return
             }
 
             let token = data['refreshToken'].replace('Bearer ','')
-            localStorage.setItem('token', token);
+            localStorage.setItem('token', token)
             setAuthState(true)
-
-            clearTimeout(timer)
-            timer = setTimeout(onRefreshTokenHandler, 900000)
         },
         onError: (error) => {
-            console.log(error)
-            clearTimeout(timer)
-            setAuthState(false)
-        }
+            if (error.message.includes('Unexpected token')) {
+                localStorage.setItem('token', '');
+                onRefreshTokenHandler()
+            } else {
+                setAuthState(false)
+            }
+        },
     })
 
     const [onLoginHandler] = useMutation(LOGIN, {
@@ -119,15 +115,12 @@ export default function SignIn(props: SignInSideProps) {
                 return
             }
 
+            localStorage.setItem('token', "");
             let token = data['login'].replace('Bearer ','')
             localStorage.setItem('token', token);
             setAuthState(true)
-
-            clearTimeout(timer)
-            timer = setTimeout(onRefreshTokenHandler, 900000)
         },
         onError: (error) => {
-            clearTimeout(timer)
             setAuthState(false)
         },
     })
@@ -178,8 +171,11 @@ export default function SignIn(props: SignInSideProps) {
                             variant="contained"
                             color="primary"
                             onClick={() => {onLoginHandler({
-                                variables: { "isRemember": isRemember, "password": password }
-                            })}}
+                                    variables: {
+                                        "isRemember": isRemember,
+                                        "password": password,
+                                    }
+                                })}}
                             className={classes.submit}
                         >
                             Sign In

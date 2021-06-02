@@ -13,8 +13,10 @@ import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 
 import SettingsTable from "./SettingsTable";
-import {createData, createNumberFieldData, createOptionsFieldData, Data, Editors} from './Data'
+import { createButton, createData, createNumberFieldData, createOptionsFieldData, Data, Editors } from './Data'
 import { languages } from "./i18n/config";
+import { useAuth } from './auth/AuthContext'
+import { gql, useLazyQuery } from '@apollo/client'
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -46,16 +48,44 @@ interface SettingsProps {
     setLanguage: (language: string) => void;
 }
 
+const LOGOUT = gql`
+  query logout {
+    logout
+  }
+`
+
 function Settings(props: SettingsProps) {
     const classes = useStyles();
     const [expanded, setExpanded] = React.useState<string | false>(false);
     const { t, darkMode, setDarkMode, language, setLanguage } = props;
+
+    const setAuthState = useAuth()[1]
+
+    const [onLogHandler] = useLazyQuery(LOGOUT, {
+        onCompleted: (data) => {
+            if (!data || !data['logout']) {
+                return
+            }
+
+            localStorage.setItem('token', '')
+            setAuthState(false)
+        },
+        onError: (error) => {
+            localStorage.setItem('token', '')
+            setAuthState(false)
+        },
+    })
+
+    const logout = () => {
+        onLogHandler()
+    }
 
     const interfaceSettings = [
         createData("darkMode", Editors.Switch, darkMode),
         createOptionsFieldData("language", language, languages),
         createData("testTextInput", Editors.TextField, "test"),
         createNumberFieldData("testNumberInput", 5, 0, 100),
+        createButton("logout", logout)
     ];
 
     const titles: Record<string, string> = {
@@ -63,6 +93,7 @@ function Settings(props: SettingsProps) {
         "language": t("settings:language"),
         "testTextInput": "Test text input",
         "testNumberInput": "Test number input",
+        "logout": t("settings:logout")
     };
 
     const defaultInterfaceSettings: Data[] = [];

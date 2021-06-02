@@ -1,17 +1,19 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import './index.css'
+import App from './App'
+import reportWebVitals from './reportWebVitals'
+import { AuthProvider } from './auth/AuthContext'
 
-import {ApolloClient, ApolloProvider, createHttpLink, InMemoryCache} from '@apollo/client'
-import {setContext} from '@apollo/client/link/context'
+import { ApolloClient, ApolloProvider, createHttpLink, from, InMemoryCache } from '@apollo/client'
+import { setContext } from '@apollo/client/link/context'
+import { onError } from '@apollo/client/link/error'
 
 const httpLink = createHttpLink({
-    uri: 'http://localhost:8080/query',
+    uri: '/api',
 });
 
-const authLink = setContext((_, { headers }) => {
+const authMiddleware = setContext((_, { headers }) => {
     const token = localStorage.getItem('token');
     return {
         headers: {
@@ -21,16 +23,27 @@ const authLink = setContext((_, { headers }) => {
     }
 });
 
+const logoutMiddleware = onError(({ networkError, graphQLErrors }) => {
+    console.log(networkError)
+    console.log(graphQLErrors)
+})
+
 export const client = new ApolloClient({
-    link: authLink.concat(httpLink),
+    link: from([
+        authMiddleware,
+        logoutMiddleware,
+        httpLink
+    ]),
     cache: new InMemoryCache(),
-    credentials: 'include',
+    credentials: 'same-origin',
 });
 
 ReactDOM.render(
-    <ApolloProvider client={client}>
-        <App />
-    </ApolloProvider>,
+    <AuthProvider>
+        <ApolloProvider client={client}>
+            <App />
+        </ApolloProvider>
+    </AuthProvider>,
   document.getElementById('root')
 );
 

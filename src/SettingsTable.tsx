@@ -111,7 +111,7 @@ function SettingsTable(props: SettingsTableProps) {
                 >
                     <TableBody>
                         {values.map((row) => {
-                            let valueEditor = null;
+                            let valueEditor = null
 
                             switch (row.type) {
                                 case Editors.Switch:
@@ -120,7 +120,7 @@ function SettingsTable(props: SettingsTableProps) {
                                                           onChange={(event) =>
                                                               handleChangeProp(row, event.target.checked)}
                                         />
-                                    break;
+                                    break
                                 case Editors.TextField:
                                     valueEditor =
                                         <TextField
@@ -132,7 +132,7 @@ function SettingsTable(props: SettingsTableProps) {
                                             onChange={(event) =>
                                                 handleChangeProp(row, event.target.value)}
                                         />
-                                    break;
+                                    break
                                 case Editors.NumberField:
                                     valueEditor =
                                         <TextField
@@ -146,7 +146,7 @@ function SettingsTable(props: SettingsTableProps) {
                                             onChange={(event) =>
                                                 handleChangeProp(row, event.target.value)}
                                         />
-                                    break;
+                                    break
                                 case Editors.OptionsField:
                                     if (row.options) {
                                         const options: Record<string, string> = row.options;
@@ -169,7 +169,15 @@ function SettingsTable(props: SettingsTableProps) {
                                                 }
                                             </Select>
                                     }
-                                    break;
+                                    break
+                                case Editors.Button:
+                                    if (row.buttonHandler) {
+                                        valueEditor =
+                                            <Button variant="contained" color="primary" onClick={row.buttonHandler}>
+                                                {rowsTitles[row.name]}
+                                            </Button>
+                                    }
+                                    break
                             }
 
                             return (

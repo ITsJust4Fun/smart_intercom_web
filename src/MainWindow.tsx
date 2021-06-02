@@ -1,6 +1,5 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { ApolloProvider } from '@apollo/client'
 
 import { makeStyles, createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
@@ -25,7 +24,7 @@ import Settings from './Settings'
 import Reports from './Reports'
 import SignIn from './SignIn'
 import './i18n/config'
-import { client } from './auth/Auth'
+import {useAuth} from './auth/AuthContext'
 
 const useStyles = makeStyles({
     root: {
@@ -60,7 +59,7 @@ export default function MainWindow() {
     const mainPrimaryColor = darkState ? deepPurple[200] : lightBlue[700]
     const mainSecondaryColor = darkState ? green[200] : green[400]
 
-    const [isAuth, setAuthState] = React.useState(false)
+    const [isAuth, setAuthState] = useAuth()
 
     const setLanguage = (language: string) => {
         i18n.changeLanguage(language)
@@ -111,39 +110,37 @@ export default function MainWindow() {
     }
 
     return (
-        <ApolloProvider client={client}>
-            <ThemeProvider theme={theme}>
-                <div className={classes.root}>
-                    <CssBaseline />
-                    <BottomNavigationContainer value={value} index={Tabs.DashboardTab}>
-                        <Dashboard />
-                    </BottomNavigationContainer>
-                    <BottomNavigationContainer value={value} index={Tabs.VideosTab}>
-                        <Videos />
-                    </BottomNavigationContainer>
-                    <BottomNavigationContainer value={value} index={Tabs.SettingsTab}>
-                        <Settings darkMode={darkState}
-                                  setDarkMode={setDarkState}
-                                  language={i18n.language}
-                                  setLanguage={setLanguage}
-                        />
-                    </BottomNavigationContainer>
-                    <BottomNavigationContainer value={value} index={Tabs.AssignmentTab}>
-                        <Reports />
-                    </BottomNavigationContainer>
-                    <BottomNavigation
-                        value={value}
-                        onChange={handleChange}
-                        showLabels
-                        className={classes.bottomNavigation}
-                    >
-                        <BottomNavigationAction label={t('main:dashboard')} icon={dashboardIconTab}/>
-                        <BottomNavigationAction label={t('main:videos')} icon={videosIconTab}/>
-                        <BottomNavigationAction label={t('main:settings')} icon={settingsIconTab}/>
-                        <BottomNavigationAction label={t('main:reports')} icon={assignmentIconTab}/>
-                    </BottomNavigation>
-                </div>
-            </ThemeProvider>
-        </ApolloProvider>
+        <ThemeProvider theme={theme}>
+            <div className={classes.root}>
+                <CssBaseline />
+                <BottomNavigationContainer value={value} index={Tabs.DashboardTab}>
+                    <Dashboard />
+                </BottomNavigationContainer>
+                <BottomNavigationContainer value={value} index={Tabs.VideosTab}>
+                    <Videos />
+                </BottomNavigationContainer>
+                <BottomNavigationContainer value={value} index={Tabs.SettingsTab}>
+                    <Settings darkMode={darkState}
+                              setDarkMode={setDarkState}
+                              language={i18n.language}
+                              setLanguage={setLanguage}
+                    />
+                </BottomNavigationContainer>
+                <BottomNavigationContainer value={value} index={Tabs.AssignmentTab}>
+                    <Reports />
+                </BottomNavigationContainer>
+                <BottomNavigation
+                    value={value}
+                    onChange={handleChange}
+                    showLabels
+                    className={classes.bottomNavigation}
+                >
+                    <BottomNavigationAction label={t('main:dashboard')} icon={dashboardIconTab}/>
+                    <BottomNavigationAction label={t('main:videos')} icon={videosIconTab}/>
+                    <BottomNavigationAction label={t('main:settings')} icon={settingsIconTab}/>
+                    <BottomNavigationAction label={t('main:reports')} icon={assignmentIconTab}/>
+                </BottomNavigation>
+            </div>
+        </ThemeProvider>
     )
 }
