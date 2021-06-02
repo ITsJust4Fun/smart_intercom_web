@@ -1,20 +1,21 @@
-import React from 'react';
-import { TFunction, withTranslation } from 'react-i18next';
-import { i18n } from 'i18next';
+import React from 'react'
+import { TFunction, withTranslation } from 'react-i18next'
+import { i18n } from 'i18next'
+import Cookies from 'universal-cookie'
 
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import Accordion from '@material-ui/core/Accordion';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
-import AccordionActions from '@material-ui/core/AccordionActions';
-import Typography from '@material-ui/core/Typography';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import Button from '@material-ui/core/Button';
-import Divider from '@material-ui/core/Divider';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
+import Accordion from '@material-ui/core/Accordion'
+import AccordionDetails from '@material-ui/core/AccordionDetails'
+import AccordionSummary from '@material-ui/core/AccordionSummary'
+import AccordionActions from '@material-ui/core/AccordionActions'
+import Typography from '@material-ui/core/Typography'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+import Button from '@material-ui/core/Button'
+import Divider from '@material-ui/core/Divider'
 
-import SettingsTable from "./SettingsTable";
+import SettingsTable from "./SettingsTable"
 import { createButton, createData, createNumberFieldData, createOptionsFieldData, Data, Editors } from './Data'
-import { languages } from "./i18n/config";
+import { languages } from "./i18n/config"
 import { useAuth } from './auth/AuthContext'
 import { gql, useLazyQuery } from '@apollo/client'
 
@@ -40,12 +41,12 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface SettingsProps {
-    t: TFunction<string[]>;
-    i18n: i18n;
-    darkMode: boolean;
-    setDarkMode: React.Dispatch<React.SetStateAction<boolean>>;
-    language: string;
-    setLanguage: (language: string) => void;
+    t: TFunction<string[]>
+    i18n: i18n
+    darkMode: boolean
+    setDarkMode: React.Dispatch<React.SetStateAction<boolean>>
+    language: string
+    setLanguage: (language: string) => void
 }
 
 const LOGOUT = gql`
@@ -104,19 +105,23 @@ function Settings(props: SettingsProps) {
     };
 
     const handleInterfaceChange = (values: Data[]) => {
+        const cookies = new Cookies()
+
         for (let data of values) {
-            if (data.name === "darkMode") {
-                setDarkMode(data.value);
-            } else if (data.name === "language") {
-                setLanguage(data.value);
+            cookies.set(data.name, data.value, { path: '/' })
+
+            if (data.name === 'darkMode') {
+                setDarkMode(data.value)
+            } else if (data.name === 'language') {
+                setLanguage(data.value)
             }
         }
     };
 
     return (
         <div className={classes.root}>
-            <SettingsTable title="interfaceSettings"
-                           description="setupWebApp"
+            <SettingsTable title='interfaceSettings'
+                           description='setupWebApp'
                            rows={interfaceSettings}
                            defaultRows={defaultInterfaceSettings}
                            rowsTitles={titles}
@@ -125,8 +130,8 @@ function Settings(props: SettingsProps) {
             <Accordion expanded={expanded === 'panel2'} onChange={handleExpandChange('panel2')}>
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel2bh-content"
-                    id="panel2bh-header"
+                    aria-controls='panel2bh-content'
+                    id='panel2bh-header'
                 >
                     <Typography className={classes.heading}>Users</Typography>
                     <Typography className={classes.secondaryHeading}>

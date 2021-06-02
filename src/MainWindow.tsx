@@ -1,5 +1,6 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import { useTranslation } from 'react-i18next'
+import Cookies from 'universal-cookie'
 
 import { makeStyles, createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
@@ -24,7 +25,7 @@ import Settings from './Settings'
 import Reports from './Reports'
 import SignIn from './SignIn'
 import './i18n/config'
-import {useAuth} from './auth/AuthContext'
+import { useAuth } from './auth/AuthContext'
 
 const useStyles = makeStyles({
     root: {
@@ -52,7 +53,21 @@ export default function MainWindow() {
         setValue(newValue)
     }
 
-    const [darkState, setDarkState] = React.useState(false)
+    const cookies = new Cookies()
+    let darkModeCookies = cookies.get('darkMode')
+    let languageCookies = cookies.get('language')
+
+    let darkModeState = false
+
+    if (darkModeCookies === 'true') {
+        darkModeState = true
+    }
+
+    if (languageCookies === undefined) {
+        languageCookies = 'en'
+    }
+
+    const [darkState, setDarkState] = React.useState(darkModeState)
     const { t, i18n } = useTranslation(['main'])
 
     const palletType = darkState ? 'dark' : 'light'
@@ -64,6 +79,10 @@ export default function MainWindow() {
     const setLanguage = (language: string) => {
         i18n.changeLanguage(language)
     }
+
+    useEffect(() => {
+        i18n.changeLanguage(languageCookies)
+    }, [i18n, languageCookies])
 
     const theme = React.useMemo(
         () =>

@@ -115,7 +115,6 @@ export default function SignIn(props: SignInSideProps) {
                 return
             }
 
-            localStorage.setItem('token', "");
             let token = data['login'].replace('Bearer ','')
             localStorage.setItem('token', token);
             setAuthState(true)

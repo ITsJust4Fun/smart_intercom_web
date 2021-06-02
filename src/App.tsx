@@ -1,10 +1,13 @@
 import React from 'react'
 import MainWindow from './MainWindow'
 import './App.css'
+import { AuthProvider } from './auth/AuthContext'
 
 function App() {
     return (
-        <MainWindow />
+        <AuthProvider>
+            <MainWindow />
+        </AuthProvider>
     )
 }
 
