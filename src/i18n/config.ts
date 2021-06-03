@@ -32,6 +32,6 @@ export const resources = {
 
 i18n.use(initReactI18next).init({
     lng: 'en',
-    ns: ['main', 'settings', 'sign_in'],
+    ns: ['main', 'settings', 'sign_in', 'videos'],
     resources,
 })
