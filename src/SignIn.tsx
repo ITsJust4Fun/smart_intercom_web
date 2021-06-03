@@ -18,7 +18,7 @@ const LOGIN = gql`
   mutation login($isRemember: Boolean!, $password: String!) {
     login(input: {isRemember: $isRemember, password: $password})
   }
-`;
+`
 
 const REFRESH_TOKEN = gql`
   query refresh {

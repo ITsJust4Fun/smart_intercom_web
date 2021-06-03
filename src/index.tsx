@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 import './index.css'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
+import refreshTokenHandler from './auth/RefreshToken'
 
 import { ApolloClient, ApolloProvider, createHttpLink, from, InMemoryCache } from '@apollo/client'
 import { setContext } from '@apollo/client/link/context'
@@ -17,20 +18,32 @@ const authMiddleware = setContext((_, { headers }) => {
     return {
         headers: {
             ...headers,
-            Authorization: token ? `Bearer ${token}` : "",
+            Authorization: token ? `Bearer ${token}` : '',
         },
     }
 })
 
-const logErrorMiddleware = onError(({ networkError, graphQLErrors }) => {
-    console.log(networkError)
-    console.log(graphQLErrors)
+const errorMiddleware = onError(({ networkError, graphQLErrors, forward, operation}) => {
+    if (networkError) {
+        console.log(networkError)
+    }
+
+    if (graphQLErrors) {
+        console.log(graphQLErrors)
+
+        for (let error of graphQLErrors) {
+            if (error.message.includes('access denied') && refreshTokenHandler()) {
+                return forward(operation)
+            }
+        }
+    }
+
 })
 
 export const client = new ApolloClient({
     link: from([
         authMiddleware,
-        logErrorMiddleware,
+        errorMiddleware,
         httpLink
     ]),
     cache: new InMemoryCache(),

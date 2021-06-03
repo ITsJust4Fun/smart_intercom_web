@@ -1,5 +1,4 @@
-import React from 'react'
-import {ApolloClient, createHttpLink, from, gql, InMemoryCache, useLazyQuery} from '@apollo/client'
+import { ApolloClient, createHttpLink, gql, InMemoryCache } from '@apollo/client'
 
 const httpLink = createHttpLink({
     uri: '/api',
@@ -17,8 +16,9 @@ export const client = new ApolloClient({
     credentials: 'same-origin',
 });
 
-export default function getRefreshTokenHandler() {
+export default function refreshTokenHandler() {
     let result = false
+    localStorage.setItem('token', '')
 
     client.query({
         query: REFRESH_TOKEN
