@@ -1,8 +1,15 @@
-import React from 'react';
+import React from 'react'
 
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
+import Grid from '@material-ui/core/Grid'
+import CardContent from '@material-ui/core/CardContent'
+import Card from '@material-ui/core/Card'
+import Typography from '@material-ui/core/Typography'
+import WarningIcon from '@material-ui/icons/Warning'
+import ErrorIcon from '@material-ui/icons/Error'
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever'
+import VisibilityIcon from '@material-ui/icons/Visibility'
+import { CardActions, CardHeader, IconButton } from '@material-ui/core'
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -11,23 +18,52 @@ const useStyles = makeStyles((theme: Theme) =>
             margin: 0,
             width: "100%",
         },
-        paper: {
-            height: 250,
-            width: 350,
+        card: {
+            maxWidth: 345,
+        },
+        warning: {
+            color: '#d4cf4e',
+        },
+        error: {
+            color: '#e34949',
         },
     }),
-);
+)
 
 export default function Reports() {
-    const classes = useStyles();
+    const classes = useStyles()
 
     return (
         <Grid container className={classes.root} justify="center" spacing={3}>
             {[0, 1, 2, 3, 4, 5].map((value) => (
                 <Grid key={value} item>
-                    <Paper className={classes.paper} />
+                    <Card className={classes.card}>
+                        <CardHeader
+                            avatar={
+                                value % 2
+                                    ? <WarningIcon className={classes.warning} />
+                                    : <ErrorIcon className={classes.error} />
+                            }
+                            title="Telegram plugin"
+                            subheader="September 14, 2016"
+                        />
+                        <CardContent>
+                            <Typography variant="body2" color="textSecondary" component="p">
+                                This impressive paella is a perfect party dish and a fun meal to cook together with your
+                                guests. Add 1 cup of frozen peas along with the mussels, if you like.
+                            </Typography>
+                        </CardContent>
+                        <CardActions disableSpacing>
+                            <IconButton aria-label="Delete">
+                                <DeleteForeverIcon />
+                            </IconButton>
+                            <IconButton aria-label="Viewed">
+                                <VisibilityIcon />
+                            </IconButton>
+                        </CardActions>
+                    </Card>
                 </Grid>
             ))}
         </Grid>
-    );
+    )
 }
