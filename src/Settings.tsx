@@ -200,7 +200,7 @@ function Settings(props: SettingsProps) {
                 </AccordionActions>
             </Accordion>
         </div>
-    );
+    )
 }
 
-export default withTranslation("settings")(Settings);
+export default withTranslation("settings")(Settings)

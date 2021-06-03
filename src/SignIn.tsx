@@ -13,6 +13,8 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 import { gql, useMutation, useLazyQuery } from '@apollo/client'
+import { TFunction, withTranslation } from 'react-i18next'
+import { i18n } from 'i18next'
 
 const LOGIN = gql`
   mutation login($isRemember: Boolean!, $password: String!) {
@@ -70,13 +72,15 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-interface SignInSideProps {
-    setAuthState: React.Dispatch<React.SetStateAction<boolean>>;
+interface SignInProps {
+    t: TFunction<string[]>
+    i18n: i18n
+    setAuthState: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function SignIn(props: SignInSideProps) {
-    const { setAuthState } = props;
-    const classes = useStyles();
+function SignIn(props: SignInProps) {
+    const { t, setAuthState } = props
+    const classes = useStyles()
 
     const [password, setPassword] = React.useState("")
     const [isRemember, setIsRemember] = React.useState(false)
@@ -138,7 +142,7 @@ export default function SignIn(props: SignInSideProps) {
                         <LockOutlinedIcon />
                     </Avatar>
                     <Typography component="h1" variant="h5">
-                        Sign in
+                        {t('sign_in:sign_in')}
                     </Typography>
                     <div className={classes.form}>
                         <TextField
@@ -147,7 +151,7 @@ export default function SignIn(props: SignInSideProps) {
                             required
                             fullWidth
                             name="password"
-                            label="Password"
+                            label={t('sign_in:password')}
                             type="password"
                             id="password"
                             autoComplete="current-password"
@@ -162,7 +166,7 @@ export default function SignIn(props: SignInSideProps) {
                                     onChange={(event) =>
                                         handleRememberEdit(event.target.checked)}
                                 />}
-                            label="Remember me"
+                            label={t('sign_in:remember')}
                         />
                         <Button
                             type="submit"
@@ -177,7 +181,7 @@ export default function SignIn(props: SignInSideProps) {
                                 })}}
                             className={classes.submit}
                         >
-                            Sign In
+                            {t('sign_in:sign_in')}
                         </Button>
                         <Box mt={5}>
                             <Copyright />
@@ -188,3 +192,5 @@ export default function SignIn(props: SignInSideProps) {
         </Grid>
     );
 }
+
+export default withTranslation('sign_in')(SignIn)

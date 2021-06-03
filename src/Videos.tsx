@@ -9,11 +9,13 @@ import CardActionArea from '@material-ui/core/CardActionArea'
 import CardActions from '@material-ui/core/CardActions'
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever'
 import Typography from '@material-ui/core/Typography'
+import Button from '@material-ui/core/Button'
 import { gql, useMutation, useQuery } from '@apollo/client'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
 import { useAuth } from './auth/AuthContext'
-import Button from '@material-ui/core/Button'
+import { TFunction, withTranslation } from 'react-i18next'
+import { i18n } from 'i18next'
 
 interface Video {
     _id: string
@@ -70,7 +72,13 @@ mutation RemoveVideo($id: String!) {
 }
 `
 
-export default function Videos() {
+interface VideosProps {
+    t: TFunction<string[]>
+    i18n: i18n
+}
+
+function Videos(props: VideosProps) {
+    const { t } = props
     const classes = useStyles()
     const setAuthState = useAuth()[1]
 
@@ -110,7 +118,7 @@ export default function Videos() {
                         </CardActionArea>
                         <CardContent className={classes.cardContent}>
                             <Typography variant="body1" color="textSecondary" component="span">
-                                {'Time: ' + video.time}
+                                {t('videos:time') + ': ' + video.time}
                             </Typography>
                         </CardContent>
                         <CardActions>
@@ -125,7 +133,7 @@ export default function Videos() {
                                     refetch()
                                 }}
                             >
-                                Remove
+                                {t('videos:remove')}
                             </Button>
                         </CardActions>
                     </Card>
@@ -134,3 +142,5 @@ export default function Videos() {
         </Grid>
     )
 }
+
+export default withTranslation('videos')(Videos)
