@@ -15,6 +15,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import { gql, useMutation, useLazyQuery } from '@apollo/client'
 import { TFunction, withTranslation } from 'react-i18next'
 import { i18n } from 'i18next'
+import CircularProgress from '@material-ui/core/CircularProgress'
 
 const LOGIN = gql`
   mutation login($isRemember: Boolean!, $password: String!) {
@@ -70,6 +71,10 @@ const useStyles = makeStyles((theme) => ({
     submit: {
         margin: theme.spacing(3, 0, 2),
     },
+    load: {
+        margin: 'auto',
+        display: 'block',
+    },
 }));
 
 interface SignInProps {
@@ -113,7 +118,7 @@ function SignIn(props: SignInProps) {
         },
     })
 
-    const [onLoginHandler] = useMutation(LOGIN, {
+    const [onLoginHandler, { loading }] = useMutation(LOGIN, {
         onCompleted: (data) => {
             if (!data || !data['login']) {
                 return
@@ -168,21 +173,27 @@ function SignIn(props: SignInProps) {
                                 />}
                             label={t('sign_in:remember')}
                         />
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            color="primary"
-                            onClick={() => {onLoginHandler({
-                                    variables: {
-                                        "isRemember": isRemember,
-                                        "password": password,
-                                    }
-                                })}}
-                            className={classes.submit}
-                        >
-                            {t('sign_in:sign_in')}
-                        </Button>
+                        {
+                            loading
+                            ? <div><CircularProgress className={classes.load} /></div>
+                            : <Button
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                color="primary"
+                                onClick={() => {
+                                    onLoginHandler({
+                                        variables: {
+                                            "isRemember": isRemember,
+                                            "password": password,
+                                        }
+                                    })
+                                }}
+                                className={classes.submit}
+                            >
+                                {t('sign_in:sign_in')}
+                            </Button>
+                        }
                         <Box mt={5}>
                             <Copyright />
                         </Box>

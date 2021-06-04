@@ -7,6 +7,7 @@ import Card from '@material-ui/core/Card'
 import Typography from '@material-ui/core/Typography'
 import WarningIcon from '@material-ui/icons/Warning'
 import ErrorIcon from '@material-ui/icons/Error'
+import CheckCircleIcon from '@material-ui/icons/CheckCircle'
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever'
 import VisibilityIcon from '@material-ui/icons/Visibility'
 import { CardActions, CardHeader, IconButton } from '@material-ui/core'
@@ -27,11 +28,15 @@ const useStyles = makeStyles((theme: Theme) =>
         error: {
             color: '#e34949',
         },
+        ok: {
+            color: '#42c945',
+        },
     }),
 )
 
 export default function Reports() {
     const classes = useStyles()
+    const iconsAva = [<CheckCircleIcon className={classes.ok} />, <WarningIcon className={classes.warning} />, <ErrorIcon className={classes.error} />]
 
     return (
         <Grid container className={classes.root} justify="center" spacing={3}>
@@ -40,9 +45,7 @@ export default function Reports() {
                     <Card className={classes.card}>
                         <CardHeader
                             avatar={
-                                value % 2
-                                    ? <WarningIcon className={classes.warning} />
-                                    : <ErrorIcon className={classes.error} />
+                                iconsAva[value % 3]
                             }
                             title="Telegram plugin"
                             subheader="September 14, 2016"
