@@ -22,6 +22,7 @@ const useStyles = makeStyles(() =>
 )
 
 interface LabeledPieChartProps {
+    title: string
     data: PieChartData[]
     startIndex: number
     colors: string[]
@@ -33,14 +34,17 @@ interface LabeledPieChartProps {
 }
 
 export default function LabeledPieChart(props: LabeledPieChartProps) {
-    const { data,
+    const {
+        title,
+        data,
         startIndex,
         colors,
         postfix,
         width,
         height,
         innerRadius,
-        outerRadius} = props
+        outerRadius
+    } = props
 
     const theme = useTheme()
 
@@ -132,7 +136,7 @@ export default function LabeledPieChart(props: LabeledPieChartProps) {
 
     return (
         <div className={classes.container}>
-            <Typography variant='h6' align={'center'}>DATA</Typography>
+            <Typography variant='h6' align={'center'}>{title}</Typography>
             <div className={classes.chart}>
                 <PieChart width={width} height={height}>
                     <Pie

@@ -6,6 +6,7 @@ import Paper from '@material-ui/core/Paper'
 
 import LabeledPieChart from './LabeledPieChart'
 import { createPieChartData, PieChartData } from './PieChartData'
+import {gql, useQuery} from '@apollo/client'
 
 const useStyles = makeStyles(() =>
     createStyles({
@@ -21,39 +22,59 @@ const useStyles = makeStyles(() =>
     }),
 )
 
+interface ReportStatistics {
+    normal: number
+    warnings: number
+    errors: number
+}
+
+interface ReportStatisticsData {
+    reportStatistics: ReportStatistics
+}
+
+const REPORT_STATISTICS = gql`
+query ReportStatistics {
+  reportStatistics {
+    normal
+    warnings
+    errors
+  }
+}
+`
+
 export default function Dashboard() {
     const classes = useStyles()
+    const {loading, error, data} = useQuery<ReportStatisticsData>(REPORT_STATISTICS)
 
-    const data: PieChartData[] = [
-        createPieChartData('Group A', 400),
-        createPieChartData('Свободно', 300),
-        createPieChartData('Group C', 300),
-        createPieChartData('Group D', 200)
-    ]
+    const reportData: PieChartData[] = []
+
+    if (data) {
+        reportData.push(createPieChartData('Normal', data.reportStatistics.normal))
+        reportData.push(createPieChartData('Warnings', data.reportStatistics.warnings))
+        reportData.push(createPieChartData('Errors', data.reportStatistics.errors))
+    }
 
     return (
-        <Grid container className={classes.root} justify="center" spacing={3}>
-            {[0, 1, 2, 3, 4, 5].map((value) => (
-                <Grid key={value} item>
-                    <Paper className={classes.paper}>
-                        <LabeledPieChart
-                            data={data}
-                            startIndex={0}
-                            colors={[
-                                "#0088FE",
-                                "#00C49F",
-                                "#FFBB28",
-                                "#FF8042"
-                            ]}
-                            postfix={' mb'}
-                            width={350}
-                            height={350}
-                            innerRadius={40}
-                            outerRadius={60}
-                        />
-                    </Paper>
-                </Grid>
-            ))}
+        <Grid container className={classes.root} justify='center' spacing={3}>
+            <Grid key={'ReportStatistics'} item>
+                <Paper className={classes.paper}>
+                    <LabeledPieChart
+                        title={'Reports'}
+                        data={reportData}
+                        startIndex={0}
+                        colors={[
+                            '#42c945',
+                            '#d4cf4e',
+                            '#e34949',
+                        ]}
+                        postfix={''}
+                        width={350}
+                        height={350}
+                        innerRadius={40}
+                        outerRadius={60}
+                    />
+                </Paper>
+            </Grid>
         </Grid>
     )
 }
