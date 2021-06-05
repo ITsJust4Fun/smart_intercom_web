@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react'
+import React, {useEffect, useState} from 'react'
 import { useTranslation } from 'react-i18next'
 import Cookies from 'universal-cookie'
 
@@ -26,6 +26,7 @@ import Reports from './Reports'
 import SignIn from './SignIn'
 import './i18n/config'
 import { useAuth } from './auth/AuthContext'
+import {gql, useLazyQuery} from '@apollo/client'
 
 const useStyles = makeStyles({
     root: {
@@ -44,6 +45,12 @@ enum Tabs {
     SettingsTab,
     AssignmentTab,
 }
+
+const REPORTS_COUNT_QUERY = gql`
+query ReportsCount {
+  unviewedReportsCount
+}
+`
 
 export default function MainWindow() {
     const classes = useStyles()
@@ -84,6 +91,18 @@ export default function MainWindow() {
         i18n.changeLanguage(languageCookies)
     }, [i18n, languageCookies])
 
+    const [onUpdateReportsCount, { data }] = useLazyQuery(REPORTS_COUNT_QUERY)
+    const [unviewedCount, setUnviewedCount] = useState<number | undefined>(undefined)
+
+    useEffect(() => {
+        if (isAuth) {
+            onUpdateReportsCount()
+        }
+        if (data && data.unviewedReportsCount) {
+            setUnviewedCount(data.unviewedReportsCount)
+        }
+    }, [isAuth, data, onUpdateReportsCount])
+
     const theme = React.useMemo(
         () =>
             createMuiTheme({
@@ -114,7 +133,7 @@ export default function MainWindow() {
     const settingsIconTab = <SettingsIcon/>
     const assignmentIconTab = (
         <ThemeProvider theme={badgeTheme}>
-            <Badge badgeContent={5} color='primary'>
+            <Badge badgeContent={unviewedCount} color='primary'>
                 <AssignmentIcon/>
             </Badge>
         </ThemeProvider>
@@ -146,7 +165,9 @@ export default function MainWindow() {
                     />
                 </BottomNavigationContainer>
                 <BottomNavigationContainer value={value} index={Tabs.AssignmentTab}>
-                    <Reports />
+                    <Reports
+                        setUnviewedCount={setUnviewedCount}
+                    />
                 </BottomNavigationContainer>
                 <BottomNavigation
                     value={value}

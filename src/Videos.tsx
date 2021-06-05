@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         progress: {
             marginTop: '3%'
-        }
+        },
     }),
 )
 

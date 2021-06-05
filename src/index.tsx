@@ -44,7 +44,7 @@ export const client = new ApolloClient({
     link: from([
         authMiddleware,
         errorMiddleware,
-        httpLink
+        httpLink,
     ]),
     cache: new InMemoryCache(),
     credentials: 'same-origin',
