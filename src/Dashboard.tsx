@@ -99,8 +99,8 @@ function Dashboard(props: DashboardProps) {
     let cpuData: PieChartData[] = []
     let hddData: PieChartData[] = []
     let ramData: PieChartData[] = []
-    let hddPostfix = ' MB'
-    let ramPostfix = ' MB'
+    let hddPostfix = ' ' + t('dashboard:mb')
+    let ramPostfix = ' ' + t('dashboard:mb')
 
     if (resultReport.data) {
         reportData.push(createPieChartData(t('dashboard:normal'), resultReport.data.reportStatistics.normal))
