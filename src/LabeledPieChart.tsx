@@ -18,6 +18,9 @@ const useStyles = makeStyles(() =>
         container: {
             position: 'relative',
         },
+        pieChart: {
+            margin: 'auto'
+        }
     }),
 )
 
@@ -31,6 +34,10 @@ interface LabeledPieChartProps {
     height: number
     innerRadius: number
     outerRadius: number
+}
+
+function isInt(n: number): boolean {
+    return n % 1 === 0;
 }
 
 export default function LabeledPieChart(props: LabeledPieChartProps) {
@@ -120,7 +127,9 @@ export default function LabeledPieChart(props: LabeledPieChartProps) {
                     textAnchor={textAnchor}
                     fill={theme.palette.text.primary}
                 >
-                    {`${value}${postfix}`}
+                    {isInt(value)
+                        ? `${value}${postfix}`
+                        : `${value.toFixed(1)}${postfix}`}
                 </text>
             </g>
         )
@@ -143,8 +152,6 @@ export default function LabeledPieChart(props: LabeledPieChartProps) {
                         activeIndex={activeIndex}
                         activeShape={renderActiveShape}
                         data={chartData}
-                        cx={width / 2}
-                        cy={height / 2}
                         innerRadius={innerRadius}
                         outerRadius={outerRadius}
                         dataKey="value"

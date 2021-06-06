@@ -1,0 +1,13 @@
+{
+  "normal": "Normal",
+  "warnings": "Warnings",
+  "errors": "Errors",
+  "reports": "Reports",
+  "cpu": "CPU",
+  "ram": "RAM",
+  "storage": "Storage",
+  "used": "Used",
+  "free": "Free",
+  "gb": "GB",
+  "mb": "MB"
+}

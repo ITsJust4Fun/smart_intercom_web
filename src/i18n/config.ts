@@ -7,6 +7,8 @@ import sign_in_en from './en/signin.json'
 import sign_in_ru from './ru/signin.json'
 import videos_en from './en/videos.json'
 import videos_ru from './ru/videos.json'
+import dashboard_en from './en/dashboard.json'
+import dashboard_ru from './ru/dashboard.json'
 
 import { initReactI18next } from 'react-i18next'
 
@@ -21,17 +23,19 @@ export const resources = {
         settings: settings_en,
         sign_in: sign_in_en,
         videos: videos_en,
+        dashboard: dashboard_en,
     },
     ru: {
         main: main_ru,
         settings: settings_ru,
         sign_in: sign_in_ru,
         videos: videos_ru,
+        dashboard: dashboard_ru,
     },
 } as const
 
 i18n.use(initReactI18next).init({
     lng: 'en',
-    ns: ['main', 'settings', 'sign_in', 'videos'],
+    ns: ['main', 'settings', 'sign_in', 'videos', 'dashboard'],
     resources,
 })
