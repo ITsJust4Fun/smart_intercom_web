@@ -113,25 +113,33 @@ function Dashboard(props: DashboardProps) {
         const cpuFree = 100 - resultHardware.data.hardwareStatistics.cpuUsage
         cpuData.push(createPieChartData(t('dashboard:free'), Math.round(cpuFree)))
 
-        let [usedHDD, isGBUsedHDD] = MegabyteToGigabyte(resultHardware.data.hardwareStatistics.usedHDD)
-        let [freeHDD, isGBFreeHDD] = MegabyteToGigabyte(resultHardware.data.hardwareStatistics.freeHDD, isGBUsedHDD)
+        const createData = (used: number, free: number, data: PieChartData[]) => {
+            let [usedData, isGBUsed] = MegabyteToGigabyte(used)
+            let [freeData, isGBFree] = MegabyteToGigabyte(free, isGBUsed)
 
-        if (isGBFreeHDD) {
-            hddPostfix = ' ' + t('dashboard:gb')
+            let postfix = ' ' + t('dashboard:mb')
+
+            if (isGBFree) {
+                postfix = ' ' + t('dashboard:gb')
+            }
+
+            data.push(createPieChartData(t('dashboard:used'), usedData))
+            data.push(createPieChartData(t('dashboard:free'), freeData))
+
+            return postfix
         }
 
-        hddData.push(createPieChartData(t('dashboard:used'), usedHDD))
-        hddData.push(createPieChartData(t('dashboard:free'), freeHDD))
+        hddPostfix = createData(
+            resultHardware.data.hardwareStatistics.usedHDD,
+            resultHardware.data.hardwareStatistics.freeHDD,
+            hddData
+        )
 
-        let [usedRAM, isGBUsedRAM] = MegabyteToGigabyte(resultHardware.data.hardwareStatistics.usedRAM)
-        let [freeRAM, isGBFreeRAM] = MegabyteToGigabyte(resultHardware.data.hardwareStatistics.freeRAM, isGBUsedRAM)
-
-        if (isGBFreeRAM) {
-            ramPostfix = ' ' + t('dashboard:gb')
-        }
-
-        ramData.push(createPieChartData(t('dashboard:used'), usedRAM))
-        ramData.push(createPieChartData(t('dashboard:free'), freeRAM))
+        ramPostfix = createData(
+            resultHardware.data.hardwareStatistics.usedRAM,
+            resultHardware.data.hardwareStatistics.freeRAM,
+            ramData
+        )
     }
 
     return (
